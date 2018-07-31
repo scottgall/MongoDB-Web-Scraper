@@ -3,6 +3,7 @@ $(function() {
 // Grab the articles as a json
 
 function renderArticles () {
+  console.log('rendering')
   $('#articles').empty();
   $('#saved').empty();
 
@@ -14,16 +15,20 @@ function renderArticles () {
     // For each one
     for (var i = 0; i < data.length; i++) {
       var section = '#saved';
-      var button = 'REMOVE';
+      var toggleButtonText = 'REMOVE';
+      var button2Class = 'notes-button';
+      var button2Text = 'NOTES';
       var isSaved = true;
       // Display the apropos information on the page
       if (data[i].isSaved === false) {
         section = '#articles';
-        button = 'SAVE';
+        toggleButtonText = 'SAVE';
+        button2Class = 'delete-button';
+        button2Text = 'X';
         isSaved = false;
       } 
 
-      $(`${section}`).append(`<div><a data-id='${data[i]._id}'>${data[i].title}<br />${data[i].link}</a></br><button class='toggle-saved' data-id='${data[i]._id}' data-isSaved='${isSaved}'>${button}</button><button class='delete-article' data-id='${data[i]._id}'>X</button></div><br><hr></br>`);
+      $(`${section}`).append(`<div><a data-id='${data[i]._id}'>${data[i].title}<br />${data[i].link}</a></br><button class='toggle-saved' data-id='${data[i]._id}' data-isSaved=${isSaved}>${toggleButtonText}</button><button class=${button2Class} data-id='${data[i]._id}'>${button2Text}</button></div><br><hr></br>`);
     }
   });
 }
@@ -35,31 +40,84 @@ $('#scrape').click(function() {
     url: "/scrape"
   })
     .then(function() {
-      renderArticles();
+      setTimeout(function(){ renderArticles(); }, 1000);
     });
 });
 
 // changes isSaved to true
 $(document).on("click", ".toggle-saved", function() {
   var articleId = $(this).attr("data-id");
-  var isSaved = $(this).attr("data-isSaved");
-  console.log(isSaved);
-  console.log(articleId);
+  var setSaved = '';
+  if ($(this).attr("data-isSaved") === 'false') {
+    setSaved = true;
+  } else {
+    setSaved = false;
+  }
 
   $.ajax({
     method: "PUT",
     url: "/articles/" + articleId,
-    isSaved: isSaved
-   
+    data: { 'setSaved' : setSaved }
   })
   
   .done(function(data) {
+      console.log('updated isSaved')
       console.log(data);
       renderArticles();
   });
 });
 
+// When user clicks the delete button for a note
+$(document).on("click", ".delete-button", function() {
+  
+  // Save the p tag that encloses the button
+  var selected = $(this);
+  // Make an AJAX GET request to delete the specific note
+  // this uses the data-id of the p-tag, which is linked to the specific note
+  $.ajax({
+    type: "GET",
+    url: "/delete/" + selected.attr("data-id"),
 
+    // On successful call
+    success: function(response) {
+
+      renderArticles();
+      // Remove the p-tag from the DOM
+      // Clear the note and title inputs
+      // $("#note").val("");
+      // $("#title").val("");
+      // Make sure the #action-button is submit (in case it's update)
+      // $("#action-button").html("<button id='make-new'>Submit</button>");
+    }
+  });
+});
+
+// When user clicks the delete button for a note
+$(document).on("click", ".notes-button", function() {
+  
+  // Save the p tag that encloses the button
+  var selected = $(this);
+  // Make an AJAX GET request to delete the specific note
+  // this uses the data-id of the p-tag, which is linked to the specific note
+  $.ajax({
+    type: "GET",
+    url: "/notes/" + selected.attr("data-id"),
+
+    // On successful call
+    success: function(response) {
+      $('#notes').html(`<div>Article: ${selected.attr('data-id')}</div>`);
+      console.log('dude');
+      if (response.length < 1) {
+        $('#notes').append(`<div>no notes for this article</div>`);
+      } else {
+        for (var i = 0; i < response.length; i++) {
+          
+        } 
+      }
+
+    }
+  });
+});
 
 // Whenever someone clicks a p tag
 $(document).on("click", "p", function() {

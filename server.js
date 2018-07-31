@@ -27,28 +27,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/MongoScraper");
+mongoose.connect("mongodb://localhost/mongoScraper");
 
 // Routes
 
 // A GET route for scraping the echoJS website
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with request
-  axios.get("http://www.echojs.com/").then(function(response) {
+  axios.get("https://www.theguardian.com/world/mongolia").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
     // Now, we grab every h2 within an article tag, and do the following:
-    $("article h2").each(function(i, element) {
+    $(".js-headline-text").each(function(i, element) {
       // Save an empty result object
       var result = {};
 
       // Add the text and href of every link, and save them as properties of the result object
       result.title = $(this)
-        .children("a")
+        // .children("a")
         .text();
       result.link = $(this)
-        .children("a")
+        // .children("a")
         .attr("href");
 
       db.Article.findOne({title:result.title}).then(function(data) {
@@ -64,16 +64,6 @@ app.get("/scrape", function(req, res) {
         res.json(err);
       });
 
-      // // Create a new Article using the `result` object built from scraping
-      // db.Article.create(result)
-      //   .then(function(dbArticle) {
-      //     // View the added result in the console
-      //     console.log(dbArticle);
-      //   })
-      //   .catch(function(err) {
-      //     // If an error occurred, send it to the client
-      //     return res.json(err);
-      //   });
     });
 
     // If we were able to successfully scrape and save an Article, send a message to the client
@@ -95,10 +85,24 @@ app.get("/articles", function(req, res) {
     });
 });
 
+// Route for getting all Articles from the db
+app.get("/notes/:id", function(req, res) {
+  // Grab every document in the Articles collection
+  db.Note.find({ article_id: req.params.id })
+    .then(function(dbArticle) {
+      // If we were able to successfully find Articles, send them back to the client
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+
 // Route for grabbing a specific Article by id, populate it with it's note
-app.get("/articles/:id", function(req, res) {
+app.get("/delete/:id", function(req, res) {
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-  db.Article.findOne({ _id: req.params.id })
+  db.Article.deleteOne({ _id: req.params.id })
     // ..and populate all of the notes associated with it
     .populate("note")
     .then(function(dbArticle) {
@@ -115,9 +119,10 @@ app.get("/articles/:id", function(req, res) {
 app.put("/articles/:id", function(req, res) {
 
   db.Article
-    .findByIdAndUpdate({ _id: req.params.id }, { $set: { isSaved: req.params.isSaved }})
+    .findByIdAndUpdate({ _id: req.params.id }, { $set: { isSaved: req.body.setSaved }})
     .then(function(dbArticle) {
       res.json(dbArticle);
+      console.log('did it')
     })
     .catch(function(err) {
       res.json(err);
