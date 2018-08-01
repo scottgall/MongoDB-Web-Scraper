@@ -97,27 +97,54 @@ $(document).on("click", ".notes-button", function() {
   
   // Save the p tag that encloses the button
   var selected = $(this);
+  renderNotes(selected.attr('data-id'));
   // Make an AJAX GET request to delete the specific note
   // this uses the data-id of the p-tag, which is linked to the specific note
+  // $.ajax({
+  //   type: "GET",
+  //   url: "/notes/" + selected.attr("data-id"),
+
+  //   // On successful call
+  //   success: function(response) {
+  //     $('#notes').html(`<div>Article: ${selected.attr('data-id')}</div>`);
+  //     console.log('dude');
+  //     if (response.length < 1) {
+  //       $('#notes').append(`<div>no notes for this article</div>`);
+  //     } else {
+  //       for (var i = 0; i < response.length; i++) {
+          
+  //       } 
+  //     }
+  //     $('#notes').append('<input class="notes-input"><br><button class="submit-note-button">submit note</button>');
+  //   }
+  // });
+});
+
+function renderNotes(articleId) {
   $.ajax({
     type: "GET",
-    url: "/notes/" + selected.attr("data-id"),
+    url: "/notes/" + articleId,
 
     // On successful call
     success: function(response) {
-      $('#notes').html(`<div>Article: ${selected.attr('data-id')}</div>`);
+      $('#notes').html(`<div>Article: ${articleId}</div>`);
       console.log('dude');
       if (response.length < 1) {
         $('#notes').append(`<div>no notes for this article</div>`);
       } else {
         for (var i = 0; i < response.length; i++) {
+          console.log(response[i].body);
+          $('#notes').append(`<div>-${response[i].body}</div><button class='delete-note' data-id='${response[i]._id}' article-id='${articleId}'>X</button><br>`);
           
         } 
       }
-
+      $('#notes').append(`<input class="notes-input"><br><button class="submit-note-button" data-id=${articleId}>submit note</button>`);
     }
   });
-});
+
+}
+
+
 
 // Whenever someone clicks a p tag
 $(document).on("click", "p", function() {
@@ -154,33 +181,63 @@ $(document).on("click", "p", function() {
 });
 
 // When you click the savenote button
-$(document).on("click", "#savenote", function() {
+$(document).on("click", ".submit-note-button", function() {
+  console.log('mang')
   // Grab the id associated with the article from the submit button
   var thisId = $(this).attr("data-id");
 
   // Run a POST request to change the note, using what's entered in the inputs
   $.ajax({
     method: "POST",
-    url: "/articles/" + thisId,
+    url: "/notes/" + thisId,
     data: {
       // Value taken from title input
-      title: $("#titleinput").val(),
+      // title: $("#titleinput").val(),
       // Value taken from note textarea
-      body: $("#bodyinput").val()
+      body: $(".notes-input").val(),
+      article_id: thisId
+
     }
   })
     // With that done
     .then(function(data) {
+      console.log('added note')
+      renderNotes();
       // Log the response
-      console.log(data);
+      // console.log(data);
       // Empty the notes section
-      $("#notes").empty();
+      // $("#notes").empty();
     });
 
   // Also, remove the values entered in the input and textarea for note entry
-  $("#titleinput").val("");
-  $("#bodyinput").val("");
+  $(".notes-input").val("");
+  renderArticles(thisId);
 
+});
+
+// When user clicks the delete button for a note
+$(document).on("click", ".delete-note", function() {
+  
+  // Save the p tag that encloses the button
+  var selected = $(this);
+  // Make an AJAX GET request to delete the specific note
+  // this uses the data-id of the p-tag, which is linked to the specific note
+  $.ajax({
+    type: "GET",
+    url: "/deleteNote/" + selected.attr("data-id"),
+
+    // On successful call
+    success: function(response) {
+
+      renderNotes(selected.attr('article-id'));
+      // Remove the p-tag from the DOM
+      // Clear the note and title inputs
+      // $("#note").val("");
+      // $("#title").val("");
+      // Make sure the #action-button is submit (in case it's update)
+      // $("#action-button").html("<button id='make-new'>Submit</button>");
+    }
+  });
 });
 
 renderArticles();
