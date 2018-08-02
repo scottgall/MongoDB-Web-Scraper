@@ -27,7 +27,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/mongoScraper");
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoScraper";
+
+// Set mongoose to leverage built in JavaScript ES6 Promises
+// Connect to the Mongo DB
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
 
 // Routes
 
@@ -106,6 +112,10 @@ app.get("/delete/:id", function(req, res) {
     // ..and populate all of the notes associated with it
     .populate("note")
     .then(function(dbArticle) {
+      db.Note.deleteMany({ article_id: req.params.id })
+      .then(function(dbNote) {
+        console.log('deleted notes:', dbNote);
+      })
       // If we were able to successfully find an Article with the given id, send it back to the client
       res.json(dbArticle);
     })

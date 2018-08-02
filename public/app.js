@@ -64,10 +64,11 @@ $(document).on("click", ".toggle-saved", function() {
       console.log('updated isSaved')
       console.log(data);
       renderArticles();
+      $('#notes').empty();
   });
 });
 
-// When user clicks the delete button for a note
+// When user clicks the delete button for an article
 $(document).on("click", ".delete-button", function() {
   
   // Save the p tag that encloses the button
@@ -82,6 +83,7 @@ $(document).on("click", ".delete-button", function() {
     success: function(response) {
 
       renderArticles();
+      $('#notes').empty();
       // Remove the p-tag from the DOM
       // Clear the note and title inputs
       // $("#note").val("");
@@ -202,7 +204,7 @@ $(document).on("click", ".submit-note-button", function() {
     // With that done
     .then(function(data) {
       console.log('added note')
-      renderNotes();
+      renderNotes(thisId);
       // Log the response
       // console.log(data);
       // Empty the notes section
@@ -211,7 +213,7 @@ $(document).on("click", ".submit-note-button", function() {
 
   // Also, remove the values entered in the input and textarea for note entry
   $(".notes-input").val("");
-  renderArticles(thisId);
+  // renderArticles(thisId);
 
 });
 
