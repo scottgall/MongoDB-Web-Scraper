@@ -3,7 +3,6 @@ $(function() {
 // Grab the articles as a json
 
 function renderArticles () {
-  console.log('rendering')
   $('#articles').empty();
   $('#saved').empty();
 
@@ -130,12 +129,10 @@ function renderNotes(articleId) {
     // On successful call
     success: function(response) {
       $('#notes').html(`<div>Article: ${articleId}</div>`);
-      console.log('dude');
       if (response.length < 1) {
         $('#notes').append(`<div>no notes for this article</div>`);
       } else {
         for (var i = 0; i < response.length; i++) {
-          console.log(response[i].body);
           $('#notes').append(`<div>-${response[i].body}</div><button class='delete-note' data-id='${response[i]._id}' article-id='${articleId}'>X</button><br>`);
           
         } 
@@ -162,7 +159,6 @@ $(document).on("click", "p", function() {
   })
     // With that done, add the note information to the page
     .then(function(data) {
-      console.log(data);
       // The title of the article
       $("#notes").append("<h2>" + data.title + "</h2>");
       // An input to enter a new title
@@ -184,7 +180,6 @@ $(document).on("click", "p", function() {
 
 // When you click the savenote button
 $(document).on("click", ".submit-note-button", function() {
-  console.log('mang')
   // Grab the id associated with the article from the submit button
   var thisId = $(this).attr("data-id");
 
@@ -203,7 +198,6 @@ $(document).on("click", ".submit-note-button", function() {
   })
     // With that done
     .then(function(data) {
-      console.log('added note')
       renderNotes(thisId);
       // Log the response
       // console.log(data);

@@ -59,8 +59,6 @@ app.get("/scrape", function(req, res) {
 
       db.Article.findOne({title:result.title}).then(function(data) {
 
-        console.log(data);
-
         if(data === null) {
           db.Article.create(result).then(function(dbArticle) {
             res.json(dbArticle);
@@ -114,7 +112,6 @@ app.get("/delete/:id", function(req, res) {
     .then(function(dbArticle) {
       db.Note.deleteMany({ article_id: req.params.id })
       .then(function(dbNote) {
-        console.log('deleted notes:', dbNote);
       })
       // If we were able to successfully find an Article with the given id, send it back to the client
       res.json(dbArticle);
@@ -147,7 +144,6 @@ app.put("/articles/:id", function(req, res) {
     .findByIdAndUpdate({ _id: req.params.id }, { $set: { isSaved: req.body.setSaved }})
     .then(function(dbArticle) {
       res.json(dbArticle);
-      console.log('did it')
     })
     .catch(function(err) {
       res.json(err);
