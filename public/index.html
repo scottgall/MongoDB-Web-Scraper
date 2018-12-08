@@ -2,54 +2,91 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>mongoScraper</title>
-    <style>
-      body { background-color: lightcoral; }
-      
-      #grid-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-
-      #articles {
-        background-color: lightblue;
-      }
-
-      #saved { 
-        background-color: lightgreen;
-      }
-
-      #notes {
-        background-color: lightsalmon;
-      }
-
-      textarea, input {
-        display: block;
-        width: 100%;
-        background-color:lightpink;
-      }
-      input {
-        height: 36px;
-        font-size: 24px;
-      }
-      textarea {
-        height: 200px;
-        font-size: 18px;
-      }
-    </style>
+    <title>Mongolian News Scraper</title>
   </head>
   <body>
-      <h1>mongoScraper</h1>
-      <button id="scrape">SCRAPE</button>
-      <div id="grid-container">
-        <div>SCRAPED ARTICLES</div>
-        <div>SAVED ARTICLES</div>
-        <div>ARTICLE NOTES</div>
-        <div id="articles">ARTICLES</div>
-        <div id="saved">SAVED</div>
-        <div id="notes">NOTES</div>
+    <div id="grid-container">
+      <h1>Mongolian News Scraper</h1>
+      <button id="scrape">SCRAPE ARTICLES</button>
+      <button id="removeAll">CLEAR ALL</button>
+        <div>
+          <h3>SCRAPED ARTICLES</h3>
+          <div id="articles"></div>
+        </div>
+        <div>
+          <h3>SAVED ARTICLES</h3>
+          <div id="saved"></div>
+        </div>
+        <div>
+          <h3>ARTICLE NOTES</h3>
+          <div id="notes"></div>
+        </div>
+  
       </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="app.js"></script>
   </body>
+  <style>
+    body { background-color: lightcoral; }
+  
+    #grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-gap: 1em;
+    }
+
+    #grid-container>div {
+      border: solid black 2px;
+      text-align: center;
+    }
+    
+    h3 {
+      text-align: center;
+      padding: 0px;
+      margin: 0px;
+    }
+
+    h1 {
+      padding: 0px;
+      margin: 0px;
+      grid-column: 1 / -1;
+      justify-self: center;
+    }    
+    
+    #scrape {
+      grid-column: 1 / -1;
+      justify-self: center;
+    }
+
+    #removeAll {
+      grid-column: 1 / -1;
+      background: red;
+      justify-self: center;
+    }
+
+    div:empty {
+      height: 1em;
+    }
+    
+    .individual-article {
+      border: solid black 2px;
+      margin: 5px;
+      padding: 5px;
+      background: lightblue;
+      text-align: left;
+    }
+
+    #saved>.individual-article {
+      background: lightgreen;
+    }
+
+    #notes>.individual-article {
+      background: lightgoldenrodyellow;
+    }
+
+    button {
+      padding: 0px;
+    }
+
+  </style>
 </html>
