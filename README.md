@@ -4,10 +4,9 @@ An app that scrapes news articles from The Guardian and saves them in a MongoDB 
 
 ## Local setup
 
-1. Clone repo.
+1. Clone repo
 
-2.  Open root directory and run:
-   ```npm install```
+2.  Open root directory and run ```npm install```
 
 3.  Run Mongo shell and open a MongoDB connection on port 27017
 
