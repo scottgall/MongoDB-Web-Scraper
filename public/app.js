@@ -55,43 +55,6 @@ function renderArticles () {
         </div>`);
       }
     }
-    // for (var i = 0; i < data.length; i++) {
-    //   var section = '#saved';
-    //   var toggleButtonText = 'UN-SAVE';
-    //   var button2Class = 'notes-button';
-    //   var button2Text = 'NOTES';
-    //   var isSaved = true;
-
-    //   if (data[i].isSaved === false) {
-    //     section = '#articles';
-    //     toggleButtonText = 'SAVE';
-    //     button2Class = 'delete-button';
-    //     button2Text = 'X';
-    //     isSaved = false;
-
-    //     $(`${section}`).append(`
-    //       <div class="individual-article">
-    //         <a style="font-style: italic;" data-id='${data[i]._id}'>${data[i].title}</a>
-    //         <br />
-    //         <a href="${data[i].link}">link</a>
-    //         </br>
-    //         <button class='toggle-saved' data-id='${data[i]._id}' data-isSaved=${isSaved}>${toggleButtonText}</button>
-    //         <button class=${button2Class} data-id='${data[i]._id}'>${button2Text}</button>
-    //       </div>`);
-    //   } else {
-    //     $(`${section}`).append(`
-    //       <div class="individual-article">
-    //         <a style="font-style: italic;" data-id='${data[i]._id}'>
-    //           ${data[i].title}</a>
-    //         <br />
-    //         <a href="${data[i].link}">link</a>
-    //         </br>
-    //         <button class='toggle-saved' data-id='${data[i]._id}' data-isSaved=${isSaved}>${toggleButtonText}</button>
-    //         <button class='delete-button' data-id='${data[i]._id}'>X</button>
-    //         <button class=${button2Class} data-id='${data[i]._id}' data-title='${data[i].title}'>${button2Text}</button>
-    //       </div>`);
-    //   }
-    // }
   });
 }
 
@@ -106,7 +69,7 @@ $('#scrape').click(function() {
   });
 });
 
-// changes isSaved to true
+// SAVES/UNSAVES ARTICLES
 $(document).on("click", ".toggle-saved", function() {
   var articleId = $(this).attr("data-id");
   var setSaved = '';
@@ -122,7 +85,7 @@ $(document).on("click", ".toggle-saved", function() {
     data: { 'setSaved' : setSaved }
   })
   
-  .done(function(data) {
+  .done(function(data) {f
       renderArticles();
       $('#notes').empty();
   });
